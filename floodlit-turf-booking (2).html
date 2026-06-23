@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FLOODLIT — Book your pitch, own the night</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --bg:#0A140F;
+  --bg-soft:#0E1B14;
+  --surface:#132219;
+  --surface-2:#192D20;
+  --surface-3:#1F3526;
+  --line:rgba(242,245,240,.09);
+  --line-strong:rgba(242,245,240,.18);
+  --turf:#5FCB3C;
+  --turf-light:#92E66E;
+  --turf-dark:#2E7D1E;
+  --floodlight:#FFC857;
+  --floodlight-soft:#FFE3AC;
+  --chalk:#F2F5F0;
+  --muted:#8FA396;
+  --muted-2:#5E7468;
+  --clay:#C9544A;
+  --clay-soft:#E2837A;
+  --r-sm:10px;
+  --r-md:16px;
+  --r-lg:26px;
+  --r-pill:999px;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --font-d:'Bebas Neue', sans-serif;
+  --font-b:'Manrope', sans-serif;
+  --font-m:'JetBrains Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto;}
+  *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important;}
+}
+body{
+  background:var(--bg);
+  color:var(--chalk);
+  font-family:var(--font-b);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--turf); color:#08130C;}
+a{color:inherit; text-decoration:none;}
+button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit;}
+ul{list-style:none;}
+img,svg{display:block; max-width:100%;}
+input,select{font-family:inherit;}
+:focus-visible{outline:2px solid var(--turf-light); outline-offset:3px; border-radius:4px;}
+
+.wrap{max-width:1240px; margin:0 auto; padding:0 28px;}
+@media(max-width:640px){.wrap{padding:0 18px;}}
+
+.eyebrow{
+  font-family:var(--font-m); font-size:12px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--turf-light); display:inline-flex; align-items:center; gap:8px;
+}
+.eyebrow::before{content:''; width:7px; height:7px; border-radius:50%; background:var(--turf-light); box-shadow:0 0 10px var(--turf-light);}
+
+h1,h2,h3,.disp{font-family:var(--font-d); font-weight:400; letter-spacing:.01em; line-height:.96; text-transform:uppercase;}
+
+/* ============ AMBIENT BACKDROP ============ */
+.ambient{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+.ambient::before{
+  content:''; position:absolute; inset:0;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(242,245,240,.025) 0 1px, transparent 1px 64px),
+    repeating-linear-gradient(90deg, rgba(242,245,240,.025) 0 1px, transparent 1px 64px);
+  mask-image: radial-gradient(ellipse 90% 60% at 50% 0%, black 0%, transparent 75%);
+}
+.glow{position:absolute; border-radius:50%; filter:blur(90px); opacity:.35; animation:floodFlicker 1.6s ease-out both;}
+.glow-1{width:520px; height:520px; top:-220px; left:-120px; background:var(--turf);}
+.glow-2{width:460px; height:460px; top:-160px; right:-160px; background:var(--floodlight); opacity:.22; animation-delay:.25s;}
+@keyframes floodFlicker{
+  0%{filter:blur(90px) brightness(0);}
+  7%{filter:blur(90px) brightness(1.5);}
+  11%{filter:blur(90px) brightness(.15);}
+  18%{filter:blur(90px) brightness(1.3);}
+  24%{filter:blur(90px) brightness(.25);}
+  33%{filter:blur(90px) brightness(1);}
+  100%{filter:blur(90px) brightness(1);}
+}
+
+/* ============ HEADER ============ */
+header{
+  position:sticky; top:0; z-index:100;
+  backdrop-filter:blur(14px) saturate(140%);
+  background:rgba(10,20,15,.72);
+  border-bottom:1px solid var(--line);
+}
+.nav{display:flex; align-items:center; justify-content:space-between; padding:16px 0;}
+.brand{display:flex; align-items:center; gap:10px; font-family:var(--font-d); font-size:24px; letter-spacing:.03em;}
+.brand .dot{width:9px; height:9px; border-radius:50%; background:var(--floodlight); box-shadow:0 0 12px var(--floodlight);}
+.nav-links{display:flex; align-items:center; gap:34px; font-size:14px; font-weight:600;}
+.nav-links a{color:var(--muted); transition:color .2s var(--ease); position:relative;}
+.nav-links a:hover{color:var(--chalk);}
+.nav-cta{display:flex; align-items:center; gap:14px;}
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  font-weight:700; font-size:14px; padding:12px 22px; border-radius:var(--r-pill);
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease), background .2s var(--ease), border-color .2s var(--ease);
+  white-space:nowrap;
+}
+.btn-primary{background:var(--turf); color:#08130C;}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:0 10px 28px rgba(95,203,60,.35);}
+.btn-ghost{border:1px solid var(--line-strong); color:var(--chalk);}
+.btn-ghost:hover{border-color:var(--turf-light); color:var(--turf-light);}
+.btn-amber{background:var(--floodlight); color:#2A1B02;}
+.btn-amber:hover{transform:translateY(-2px); box-shadow:0 10px 28px rgba(255,200,87,.3);}
+.btn-sm{padding:9px 16px; font-size:13px;}
+.btn:disabled{opacity:.4; cursor:not-allowed; transform:none !important; box-shadow:none !important;}
+.hamburger{display:none; width:38px; height:38px; align-items:center; justify-content:center; border:1px solid var(--line-strong); border-radius:8px;}
+.hamburger span{display:block; width:16px; height:2px; background:var(--chalk); position:relative;}
+.hamburger span::before,.hamburger span::after{content:''; position:absolute; left:0; width:16px; height:2px; background:var(--chalk);}
+.hamburger span::before{top:-5px;} .hamburger span::after{top:5px;}
+
+@media(max-width:860px){
+  .nav-links{display:none;}
+  .nav-cta .btn-ghost{display:none;}
+  .hamburger{display:flex;}
+}
+
+/* ============ HERO ============ */
+.hero{position:relative; padding:88px 0 64px; overflow:hidden;}
+.floodbeam{
+  position:absolute; top:-40px; width:140px; height:900px;
+  background:linear-gradient(180deg, rgba(255,200,87,.16), transparent 70%);
+  transform-origin:top center;
+  filter:blur(2px);
+}
+.floodbeam.b1{left:8%; transform:rotate(14deg); animation:beamOn 1s ease-out both, sweep 9s ease-in-out 1s infinite;}
+.floodbeam.b2{right:10%; transform:rotate(-16deg); animation:beamOn 1s ease-out .35s both, sweep 11s ease-in-out 1.35s infinite reverse;}
+@keyframes beamOn{
+  0%{opacity:0;}
+  15%{opacity:.8;}
+  22%{opacity:.05;}
+  40%{opacity:.7;}
+  100%{opacity:.5;}
+}
+@keyframes sweep{0%,100%{opacity:.5;} 50%{opacity:1;}}
+
+.hero-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:50px; align-items:start; position:relative; z-index:2;}
+@media(max-width:980px){.hero-grid{grid-template-columns:1fr; gap:36px;}}
+.hero-copy > *{opacity:0; transform:translateY(16px); animation:heroIn .7s var(--ease) forwards;}
+.hero-copy .eyebrow{animation-delay:.5s;}
+.hero-copy h1{animation-delay:.65s;}
+.hero-copy p.lede{animation-delay:.8s;}
+.hero-copy .hero-proof{animation-delay:.95s;}
+@keyframes heroIn{to{opacity:1; transform:translateY(0);}}
+
+.hero-spotlight{position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0; transition:opacity .5s var(--ease); background:radial-gradient(380px circle at var(--mx,50%) var(--my,0%), rgba(255,200,87,.14), transparent 60%);}
+.hero:hover .hero-spotlight{opacity:1;}
+
+.particles{position:absolute; inset:0; z-index:1; pointer-events:none; overflow:hidden;}
+.particle{position:absolute; bottom:-10px; width:3px; height:3px; border-radius:50%; background:var(--floodlight-soft); opacity:0; animation:drift linear infinite;}
+@keyframes drift{
+  0%{transform:translateY(0) translateX(0); opacity:0;}
+  12%{opacity:.55;}
+  88%{opacity:.35;}
+  100%{transform:translateY(-460px) translateX(var(--dx,20px)); opacity:0;}
+}
+
+.hero h1{font-size:clamp(48px,7vw,84px); margin:18px 0 20px;}
+.hero h1 .line2{color:var(--turf-light);}
+.hero p.lede{font-size:17px; color:var(--muted); max-width:46ch; margin-bottom:30px;}
+.hero-proof{display:flex; gap:26px; flex-wrap:wrap;}
+.proof-item{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--muted);}
+.proof-item svg{width:18px; height:18px; flex-shrink:0;}
+
+/* search card */
+.search-card{
+  background:linear-gradient(165deg, var(--surface-2), var(--surface));
+  border:1px solid var(--line-strong); border-radius:var(--r-lg);
+  padding:26px; box-shadow:0 30px 70px -20px rgba(0,0,0,.6);
+  position:relative;
+}
+.search-card::before{
+  content:''; position:absolute; inset:0; border-radius:var(--r-lg); padding:1px;
+  background:linear-gradient(140deg, rgba(95,203,60,.5), transparent 40%, rgba(255,200,87,.35));
+  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none;
+}
+.search-card h3{font-size:13px; font-family:var(--font-m); letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:16px; font-weight:600;}
+.sport-toggle{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px;}
+.chip{
+  font-size:13px; font-weight:700; padding:9px 15px; border-radius:var(--r-pill);
+  border:1px solid var(--line-strong); color:var(--muted); transition:all .2s var(--ease);
+  display:flex; align-items:center; gap:6px;
+}
+.chip:hover{border-color:var(--turf-light); color:var(--chalk);}
+.chip.active{background:var(--turf); border-color:var(--turf); color:#08130C;}
+.field-row{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;}
+@media(max-width:520px){.field-row{grid-template-columns:1fr;}}
+.field{
+  background:var(--bg-soft); border:1px solid var(--line); border-radius:var(--r-sm);
+  padding:11px 14px;
+}
+.field label{display:block; font-size:11px; color:var(--muted-2); text-transform:uppercase; letter-spacing:.08em; margin-bottom:4px; font-family:var(--font-m);}
+.field input,.field select{
+  width:100%; background:none; border:none; color:var(--chalk); font-size:14px; font-weight:600;
+}
+.field select{appearance:none;}
+.search-card .btn{width:100%; margin-top:4px;}
+
+/* ============ STATS STRIP ============ */
+.stats{border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:30px 0; position:relative; z-index:2;}
+.stats-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; text-align:center;}
+@media(max-width:720px){.stats-grid{grid-template-columns:repeat(2,1fr); gap:28px;}}
+.stat-num{font-family:var(--font-m); font-weight:700; font-size:clamp(26px,4vw,38px); color:var(--floodlight); letter-spacing:-.02em;}
+
+/* ============ LIVE ACTIVITY TICKER ============ */
+.activity-strip{border-bottom:1px solid var(--line); background:var(--bg-soft); position:relative; z-index:1;}
+.activity-ticker{display:flex; align-items:center; gap:10px; padding:11px 0; font-size:12.5px; font-family:var(--font-m); color:var(--muted); overflow:hidden;}
+.activity-ticker .live-dot{width:7px; height:7px; border-radius:50%; background:var(--turf-light); box-shadow:0 0 8px var(--turf-light); flex-shrink:0; animation:pulse 1.6s ease-in-out infinite;}
+#tickerText{transition:opacity .3s var(--ease); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+
+/* ============ SCROLL PROGRESS ============ */
+.scroll-progress{position:fixed; top:0; left:0; height:2.5px; width:0%; background:linear-gradient(90deg, var(--turf), var(--floodlight)); z-index:300; box-shadow:0 0 8px rgba(255,200,87,.55); pointer-events:none;}
+
+.tc-live{color:var(--floodlight-soft); font-weight:600;}
+.stat-label{font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-top:4px;}
+
+/* ============ SECTION HEADERS ============ */
+.section{padding:84px 0; position:relative; z-index:1;}
+.section-head{display:flex; align-items:flex-end; justify-content:space-between; gap:24px; margin-bottom:36px; flex-wrap:wrap;}
+.section-head h2{font-size:clamp(34px,4.4vw,52px);}
+.section-head p{color:var(--muted); max-width:46ch; font-size:15px;}
+
+/* ============ FILTER BAR ============ */
+.filter-bar{display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:30px;}
+.filter-pills{display:flex; gap:8px; flex-wrap:wrap;}
+.sort-select{
+  background:var(--surface); border:1px solid var(--line-strong); border-radius:var(--r-pill);
+  padding:9px 16px; font-size:13px; font-weight:600; color:var(--chalk); appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238FA396' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 14px center; padding-right:32px;
+}
+
+/* ============ TURF GRID / CARDS ============ */
+.turf-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:22px;}
+.turf-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md);
+  overflow:hidden; transition:transform .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease);
+  opacity:0; transform:translateY(18px); position:relative;
+}
+.turf-card.in{opacity:1; transform:translateY(0);}
+.turf-card:hover{transform:translateY(-6px); border-color:var(--line-strong); box-shadow:0 24px 50px -18px rgba(0,0,0,.55);}
+.turf-card::before{content:''; position:absolute; inset:0; z-index:1; opacity:0; transition:opacity .3s var(--ease); pointer-events:none; background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%), rgba(95,203,60,.13), transparent 60%);}
+.turf-card:hover::before{opacity:1;}
+.tc-media{position:relative; aspect-ratio:16/10; background:radial-gradient(120% 100% at 30% 0%, var(--surface-3), var(--bg-soft)); overflow:hidden;}
+.tc-media svg{position:absolute; inset:0; width:100%; height:100%;}
+.tc-badge{position:absolute; top:12px; left:12px; background:rgba(10,20,15,.7); backdrop-filter:blur(6px); border:1px solid var(--line-strong); border-radius:var(--r-pill); padding:5px 11px; font-size:11px; font-weight:700; display:flex; align-items:center; gap:6px; text-transform:uppercase; letter-spacing:.04em;}
+.tc-fav{position:absolute; top:12px; right:12px; width:34px; height:34px; border-radius:50%; background:rgba(10,20,15,.7); backdrop-filter:blur(6px); border:1px solid var(--line-strong); display:flex; align-items:center; justify-content:center; transition:transform .2s var(--ease);}
+.tc-fav:hover{transform:scale(1.1);}
+.tc-fav svg{width:16px; height:16px; stroke:var(--chalk); fill:none; transition:fill .2s, stroke .2s;}
+.tc-fav.active svg{fill:var(--clay); stroke:var(--clay);}
+.tc-ribbon{position:absolute; bottom:0; left:0; right:0; background:linear-gradient(0deg, rgba(10,20,15,.92), transparent); padding:24px 12px 10px; font-size:11px; font-family:var(--font-m); color:var(--floodlight-soft); display:flex; align-items:center; gap:6px;}
+.tc-body{padding:18px;}
+.tc-top{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:6px;}
+.tc-name{font-family:var(--font-d); font-size:22px; letter-spacing:.01em;}
+.tc-rating{display:flex; align-items:center; gap:4px; font-family:var(--font-m); font-size:13px; font-weight:600; color:var(--floodlight); flex-shrink:0;}
+.tc-rating svg{width:13px; height:13px; fill:var(--floodlight);}
+.tc-loc{display:flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); margin-bottom:14px;}
+.tc-loc svg{width:13px; height:13px; stroke:var(--muted); flex-shrink:0;}
+.tc-amen{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px;}
+.amen-chip{font-size:11px; color:var(--muted); border:1px solid var(--line); border-radius:var(--r-pill); padding:4px 10px; display:flex; align-items:center; gap:5px;}
+.amen-chip svg{width:11px; height:11px; stroke:var(--muted);}
+.tc-foot{display:flex; align-items:center; justify-content:space-between; border-top:1px solid var(--line); padding-top:14px;}
+.tc-price{font-family:var(--font-m);}
+.tc-price b{font-size:19px; color:var(--chalk); font-weight:700;}
+.tc-price span{font-size:11px; color:var(--muted-2); text-transform:uppercase;}
+.empty-state{grid-column:1/-1; text-align:center; padding:70px 20px; color:var(--muted);}
+.empty-state h3{font-family:var(--font-d); font-size:30px; color:var(--chalk); margin-bottom:8px;}
+
+/* ============ HOW IT WORKS ============ */
+.steps{display:grid; grid-template-columns:repeat(3,1fr); gap:26px;}
+@media(max-width:820px){.steps{grid-template-columns:1fr;}}
+.step{background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:30px; position:relative;}
+.step-num{font-family:var(--font-m); font-size:13px; color:var(--turf-light); letter-spacing:.1em; margin-bottom:18px;}
+.step-icon{width:44px; height:44px; border-radius:12px; background:var(--surface-3); display:flex; align-items:center; justify-content:center; margin-bottom:16px;}
+.step-icon svg{width:22px; height:22px; stroke:var(--turf-light); fill:none;}
+.step h3{font-size:22px; margin-bottom:8px; text-transform:none; font-family:var(--font-b); font-weight:700;}
+.step p{color:var(--muted); font-size:14px;}
+.step-connector{position:absolute; top:50%; right:-26px; width:26px; height:1px; background:var(--line-strong); display:none;}
+@media(min-width:821px){.step:not(:last-child) .step-connector{display:block;}}
+
+/* ============ TESTIMONIALS ============ */
+.testi-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+@media(max-width:900px){.testi-grid{grid-template-columns:1fr; max-width:480px; margin:0 auto;}}
+.testi-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:26px;}
+.testi-stars{display:flex; gap:3px; margin-bottom:14px;}
+.testi-stars svg{width:14px; height:14px; fill:var(--floodlight);}
+.testi-card p{font-size:14.5px; color:var(--chalk); margin-bottom:20px; line-height:1.6;}
+.testi-who{display:flex; align-items:center; gap:12px;}
+.testi-jersey{width:40px; height:40px; border-radius:10px; background:var(--surface-3); display:flex; align-items:center; justify-content:center; font-family:var(--font-d); font-size:16px; color:var(--turf-light); border:1px solid var(--line-strong);}
+.testi-name{font-weight:700; font-size:13.5px;}
+.testi-meta{font-size:12px; color:var(--muted);}
+
+/* ============ PARTNER CTA ============ */
+.partner{
+  background:linear-gradient(120deg, var(--surface-2), var(--surface));
+  border:1px solid var(--line-strong); border-radius:var(--r-lg); padding:46px;
+  display:flex; align-items:center; justify-content:space-between; gap:30px; flex-wrap:wrap;
+  position:relative; overflow:hidden;
+}
+.partner::after{content:''; position:absolute; width:300px; height:300px; background:var(--floodlight); opacity:.12; filter:blur(80px); border-radius:50%; top:-100px; right:-60px;}
+.partner h3{font-size:clamp(26px,3.4vw,36px); margin-bottom:8px; max-width:18ch;}
+.partner p{color:var(--muted); max-width:42ch; font-size:14.5px; position:relative;}
+.partner-right{position:relative; flex-shrink:0;}
+
+/* ============ FOOTER ============ */
+footer{border-top:1px solid var(--line); padding:60px 0 28px; position:relative; z-index:1;
+  background-image:repeating-linear-gradient(90deg, rgba(242,245,240,.025) 0 1px, transparent 1px 48px);
+}
+.foot-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:30px; margin-bottom:46px;}
+@media(max-width:760px){.foot-grid{grid-template-columns:1fr 1fr; row-gap:34px;}}
+.foot-brand p{color:var(--muted); font-size:13.5px; margin:14px 0 18px; max-width:30ch;}
+.foot-social{display:flex; gap:10px;}
+.foot-social a{width:34px; height:34px; border:1px solid var(--line-strong); border-radius:50%; display:flex; align-items:center; justify-content:center; transition:border-color .2s, color .2s;}
+.foot-social a:hover{border-color:var(--turf-light); color:var(--turf-light);}
+.foot-social svg{width:15px; height:15px;}
+.foot-col h4{font-size:12px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted-2); margin-bottom:16px; font-family:var(--font-m);}
+.foot-col ul li{margin-bottom:11px;}
+.foot-col a{color:var(--muted); font-size:13.5px; transition:color .2s;}
+.foot-col a:hover{color:var(--chalk);}
+.foot-bottom{display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; padding-top:24px; border-top:1px solid var(--line); font-size:12.5px; color:var(--muted-2);}
+
+/* ============ MODAL (BOOKING) ============ */
+.modal-overlay{
+  position:fixed; inset:0; background:rgba(6,12,9,.78); backdrop-filter:blur(6px);
+  display:flex; align-items:flex-end; justify-content:center; z-index:1000;
+  opacity:0; pointer-events:none; transition:opacity .3s var(--ease);
+}
+.modal-overlay.open{opacity:1; pointer-events:auto;}
+@media(min-width:760px){.modal-overlay{align-items:center;}}
+.modal{
+  background:var(--bg-soft); border:1px solid var(--line-strong); border-radius:var(--r-lg) var(--r-lg) 0 0;
+  width:100%; max-width:640px; max-height:92vh; overflow-y:auto;
+  transform:translateY(40px); transition:transform .38s var(--ease);
+  box-shadow:0 -30px 80px rgba(0,0,0,.5);
+}
+@media(min-width:760px){.modal{border-radius:var(--r-lg); margin:20px;}}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-head{padding:22px 24px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:flex-start; gap:16px; position:sticky; top:0; background:var(--bg-soft); z-index:5;}
+.modal-head h3{font-family:var(--font-d); font-size:26px;}
+.modal-head .mh-loc{font-size:12.5px; color:var(--muted); display:flex; align-items:center; gap:6px; margin-top:4px;}
+.modal-close{width:36px; height:36px; border-radius:50%; border:1px solid var(--line-strong); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:border-color .2s, transform .2s;}
+.modal-close:hover{border-color:var(--clay); transform:rotate(90deg);}
+.modal-close svg{width:15px; height:15px;}
+.modal-body{padding:22px 24px 0;}
+
+.date-strip{display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:22px; -ms-overflow-style:none; scrollbar-width:none;}
+.date-strip::-webkit-scrollbar{display:none;}
+.date-pill{
+  flex:0 0 auto; width:62px; padding:10px 0; border-radius:14px; text-align:center; border:1px solid var(--line-strong);
+  transition:all .2s var(--ease); cursor:pointer;
+}
+.date-pill .dow{font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;}
+.date-pill .dnum{font-family:var(--font-m); font-weight:700; font-size:18px; margin-top:2px;}
+.date-pill.active{background:var(--turf); border-color:var(--turf);}
+.date-pill.active .dow,.date-pill.active .dnum{color:#08130C;}
+
+.slot-legend{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:14px; font-size:12px; color:var(--muted);}
+.slot-legend span{display:flex; align-items:center; gap:6px;}
+.legend-dot{width:9px; height:9px; border-radius:3px; display:inline-block;}
+.ld-avail{background:transparent; border:1.5px solid var(--turf-light);}
+.ld-fast{background:transparent; border:1.5px solid var(--floodlight);}
+.ld-booked{background:var(--clay); opacity:.5;}
+.ld-selected{background:var(--turf); border:none;}
+
+.live-banner{display:flex; align-items:center; gap:8px; font-size:12px; color:var(--muted); margin-bottom:14px; font-family:var(--font-m);}
+.live-banner.loading{color:var(--muted-2);}
+.live-dot{width:7px; height:7px; border-radius:50%; background:var(--turf-light); box-shadow:0 0 8px var(--turf-light); flex-shrink:0;}
+.live-banner.loading .live-dot{background:var(--muted-2); box-shadow:none; animation:pulse 1.2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:.35;} 50%{opacity:1;}}
+
+.slot-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:9px; margin-bottom:20px;}
+@media(max-width:480px){.slot-grid{grid-template-columns:repeat(3,1fr);}}
+.slot{
+  font-family:var(--font-m); font-size:12.5px; font-weight:600; padding:10px 4px; border-radius:9px;
+  border:1.5px solid var(--line-strong); color:var(--muted); text-align:center; position:relative;
+  transition:all .18s var(--ease);
+}
+.slot:not(.booked):hover{border-color:var(--turf-light); color:var(--chalk);}
+.slot.avail{border-color:rgba(95,203,60,.4); color:var(--chalk);}
+.slot.fast{border-color:var(--floodlight); color:var(--floodlight-soft);}
+.slot.fast::after{content:attr(data-left); position:absolute; top:-7px; right:-4px; background:var(--floodlight); color:#2A1B02; font-size:8.5px; font-weight:700; padding:1px 4px; border-radius:6px;}
+.slot.booked{border-color:var(--line); color:var(--muted-2); text-decoration:line-through; cursor:not-allowed; opacity:.55;}
+.slot.selected{background:var(--turf); border-color:var(--turf); color:#08130C; box-shadow:0 6px 18px rgba(95,203,60,.4); transform:translateY(-2px);}
+.slot.loading{opacity:.3; cursor:default; color:var(--muted-2);}
+
+.amen-row{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px;}
+
+.summary-bar{
+  position:sticky; bottom:0; background:var(--surface); border-top:1px solid var(--line-strong);
+  padding:16px 24px; display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:8px;
+}
+.summary-left{font-size:13px; color:var(--muted);}
+.summary-left b{font-family:var(--font-m); color:var(--floodlight); font-size:19px; display:block;}
+
+/* success state */
+.success-pane{padding:40px 24px 30px; text-align:center;}
+.success-icon{width:74px; height:74px; border-radius:50%; background:var(--turf); display:flex; align-items:center; justify-content:center; margin:0 auto 22px; box-shadow:0 0 0 8px rgba(95,203,60,.12), 0 0 40px rgba(95,203,60,.3); animation:pop .5s var(--ease);}
+@keyframes pop{0%{transform:scale(.4); opacity:0;} 60%{transform:scale(1.08);} 100%{transform:scale(1); opacity:1;}}
+.success-icon svg{width:34px; height:34px; stroke:#08130C; stroke-width:3;}
+.success-pane h3{font-family:var(--font-d); font-size:32px; margin-bottom:10px;}
+.success-pane p{color:var(--muted); font-size:14px; margin-bottom:6px;}
+.booking-id{font-family:var(--font-m); color:var(--floodlight); font-size:14px; margin-bottom:26px; display:inline-block; border:1px dashed var(--line-strong); padding:8px 16px; border-radius:var(--r-pill);}
+.success-actions{display:flex; gap:10px; justify-content:center; flex-wrap:wrap;}
+
+/* ============ MY BOOKINGS PANEL ============ */
+.bookings-overlay{position:fixed; inset:0; background:rgba(6,12,9,.7); backdrop-filter:blur(4px); z-index:1000; opacity:0; pointer-events:none; transition:opacity .3s var(--ease);}
+.bookings-overlay.open{opacity:1; pointer-events:auto;}
+.bookings-panel{
+  position:absolute; right:0; top:0; bottom:0; width:100%; max-width:420px; background:var(--bg-soft);
+  border-left:1px solid var(--line-strong); padding:24px; overflow-y:auto;
+  transform:translateX(100%); transition:transform .38s var(--ease);
+}
+.bookings-overlay.open .bookings-panel{transform:translateX(0);}
+.bp-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;}
+.bp-head h3{font-family:var(--font-d); font-size:26px;}
+.booking-item{background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); padding:16px; margin-bottom:12px;}
+.bi-top{display:flex; justify-content:space-between; gap:10px; margin-bottom:8px;}
+.bi-name{font-weight:700; font-size:14.5px;}
+.bi-tag{font-size:10.5px; font-family:var(--font-m); color:var(--turf-light); border:1px solid rgba(95,203,60,.4); padding:2px 8px; border-radius:var(--r-pill); flex-shrink:0; height:fit-content;}
+.bi-meta{font-size:12.5px; color:var(--muted); display:flex; flex-direction:column; gap:4px;}
+.bi-meta span{display:flex; align-items:center; gap:6px;}
+.bi-meta svg{width:12px; height:12px; stroke:var(--muted); flex-shrink:0;}
+.bi-cancel{margin-top:12px; font-size:12px; font-weight:700; color:var(--clay-soft); border:1px solid rgba(201,84,74,.4); border-radius:var(--r-pill); padding:7px 15px; transition:all .2s var(--ease);}
+.bi-cancel:hover:not(:disabled){background:rgba(201,84,74,.12); color:var(--clay);}
+.bi-cancel.armed{background:var(--clay); color:#fff; border-color:var(--clay);}
+.bi-cancel:disabled{opacity:.35; cursor:not-allowed; color:var(--muted-2); border-color:var(--line-strong);}
+.bookings-empty{text-align:center; padding:60px 10px; color:var(--muted);}
+.bookings-empty svg{width:46px; height:46px; stroke:var(--muted-2); margin:0 auto 16px;}
+
+/* toast */
+.toast{
+  position:fixed; bottom:24px; left:50%; transform:translate(-50%, 20px); background:var(--chalk); color:#0A140F;
+  padding:13px 22px; border-radius:var(--r-pill); font-weight:700; font-size:13.5px; z-index:1200;
+  opacity:0; transition:all .35s var(--ease); pointer-events:none; display:flex; align-items:center; gap:8px;
+  box-shadow:0 14px 30px rgba(0,0,0,.3);
+}
+.toast.show{opacity:1; transform:translate(-50%, 0);}
+.toast svg{width:15px; height:15px; stroke:#0A140F;}
+
+/* reveal-on-scroll generic */
+.reveal{opacity:0; transform:translateY(20px); transition:opacity .6s var(--ease), transform .6s var(--ease);}
+.reveal.in{opacity:1; transform:translateY(0);}
+
+@media(max-width:640px){
+  .partner{flex-direction:column; align-items:flex-start; padding:30px;}
+  .section{padding:60px 0;}
+}
+
+/* ============ SETUP BANNER ============ */
+.setup-banner{background:linear-gradient(90deg, rgba(255,200,87,.14), rgba(95,203,60,.08)); border-bottom:1px solid var(--line-strong); position:relative; z-index:200;}
+.sb-inner{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:10px 28px; font-size:12.5px; color:var(--floodlight-soft); flex-wrap:wrap;}
+.sb-inner b{color:var(--chalk);}
+.sb-close{flex-shrink:0; width:24px; height:24px; border-radius:50%; border:1px solid var(--line-strong); display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--muted); transition:border-color .2s, color .2s;}
+.sb-close:hover{border-color:var(--clay); color:var(--clay);}
+
+/* ============ SOCIAL PROOF POPUP ============ */
+.proof-popup{
+  position:fixed; bottom:80px; left:22px; z-index:1100;
+  background:var(--surface-2); border:1px solid var(--line-strong); border-radius:var(--r-md);
+  padding:14px 34px 14px 14px; display:flex; align-items:flex-start; gap:11px;
+  box-shadow:0 16px 40px rgba(0,0,0,.5); max-width:270px;
+  transform:translateX(-110%); opacity:0;
+  transition:transform .45s var(--ease), opacity .45s var(--ease);
+}
+.proof-popup.show{transform:translateX(0); opacity:1;}
+.pp-emoji{font-size:22px; flex-shrink:0; line-height:1;}
+.pp-text{font-size:12px; line-height:1.45; color:var(--muted);}
+.pp-text strong{display:block; color:var(--chalk); font-size:13px; margin-bottom:2px;}
+.pp-close{position:absolute; top:9px; right:10px; font-size:11px; color:var(--muted-2); width:18px; height:18px; border-radius:50%; transition:color .15s; display:flex; align-items:center; justify-content:center;}
+.pp-close:hover{color:var(--chalk);}
+
+/* ============ AVAILABILITY BAR ============ */
+.avail-bar-wrap{margin:10px 0 14px; display:flex; align-items:center; gap:10px;}
+.avail-bar-track{flex:1; height:4px; background:var(--line-strong); border-radius:var(--r-pill); overflow:hidden;}
+.avail-bar-fill{height:100%; border-radius:var(--r-pill); transition:width .6s var(--ease);}
+.avail-bar-label{font-family:var(--font-m); font-size:11px; color:var(--muted); flex-shrink:0; min-width:60px; text-align:right;}
+
+/* ============ NIGHT CLOCK ============ */
+.nav-clock{font-family:var(--font-m); font-size:12px; color:var(--muted); display:flex; align-items:center; gap:6px; margin-right:6px;}
+.nav-clock .live-dot{width:6px; height:6px; border-radius:50%; background:var(--turf-light); box-shadow:0 0 6px var(--turf-light); animation:pulse 1.6s ease-in-out infinite; flex-shrink:0;}
+@media(max-width:860px){.nav-clock{display:none;}}
+
+/* ============ POPULAR CARD GLOW ============ */
+.turf-card.popular-card{animation:cardBreath 4s ease-in-out infinite;}
+@keyframes cardBreath{0%,100%{box-shadow:0 0 0 0 rgba(95,203,60,0);} 50%{box-shadow:0 0 20px 2px rgba(95,203,60,.14);}}
+
+/* ============ SLOT RIPPLE ============ */
+.slot.selected::before{content:''; position:absolute; inset:0; border-radius:inherit; background:radial-gradient(circle, rgba(255,255,255,.25) 0%, transparent 70%); animation:slotRipple .4s ease-out both;}
+@keyframes slotRipple{0%{opacity:1; transform:scale(.5);} 100%{opacity:0; transform:scale(1.4);}}
+
+/* ============ HERO TYPEWRITER CURSOR ============ */
+.type-cursor{display:inline-block; width:3px; height:.85em; background:var(--turf-light); border-radius:2px; vertical-align:middle; animation:blink .8s ease-in-out infinite; margin-left:3px;}
+@keyframes blink{0%,100%{opacity:1;} 50%{opacity:0;}}
+
+/* ============ STEP ICON SPIN-IN ============ */
+.step.in .step-icon{animation:spinIn .5s var(--ease) both;}
+@keyframes spinIn{from{transform:rotate(-20deg) scale(.6); opacity:0;} to{transform:rotate(0) scale(1); opacity:1;}}
+.step:nth-child(1).in .step-icon{animation-delay:.1s;}
+.step:nth-child(2).in .step-icon{animation-delay:.22s;}
+.step:nth-child(3).in .step-icon{animation-delay:.34s;}
+
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<div class="setup-banner" id="setupBanner">
+  <div class="wrap sb-inner">
+    <span>⚡ <b>Demo mode</b> — bookings are local to this browser tab. Add your Firebase config to make slots and bookings live across every visitor. Setup steps are in the comment at the top of the &lt;script&gt; tag.</span>
+    <button class="sb-close" id="sbClose" aria-label="Dismiss">✕</button>
+  </div>
+</div>
+
+<div class="ambient">
+  <div class="glow glow-1"></div>
+  <div class="glow glow-2"></div>
+</div>
+
+<!-- ============ HEADER ============ -->
+<header>
+  <div class="wrap nav">
+    <div class="brand"><span class="dot"></span>FLOODLIT</div>
+    <nav class="nav-links">
+      <a href="#turfs">Turfs</a>
+      <a href="#how">How it works</a>
+      <a href="#testimonials">Reviews</a>
+      <a href="#" id="navBookingsLink">My bookings</a>
+    </nav>
+    <div class="nav-cta">
+      <div class="nav-clock"><span class="live-dot"></span><span id="navClock"></span></div>
+      <a href="#" class="btn btn-ghost btn-sm">Sign in</a>
+      <a href="#turfs" class="btn btn-primary btn-sm">Find a turf</a>
+      <button class="hamburger" id="hamburger" aria-label="Open menu"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="floodbeam b1"></div>
+  <div class="floodbeam b2"></div>
+  <div class="hero-spotlight" id="heroSpotlight"></div>
+  <div class="particles" id="heroParticles"></div>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow">Nagpur · Live availability</span>
+      <h1>Book your pitch.<br><span class="line2">Kick off in minutes.</span></h1>
+      <p class="lede">Football, cricket, badminton and box-cricket turfs across the city — real-time slots, transparent pricing, no phone calls to the ground keeper.</p>
+      <div class="hero-proof">
+        <span class="proof-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>Instant confirmation</span>
+        <span class="proof-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>No booking fee</span>
+        <span class="proof-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Cancel up to 2h before</span>
+      </div>
+    </div>
+
+    <div class="search-card reveal">
+      <h3>Find your slot</h3>
+      <div class="sport-toggle" id="heroSportToggle">
+        <button class="chip active" data-sport="all">All sports</button>
+        <button class="chip" data-sport="Football">⚽ Football</button>
+        <button class="chip" data-sport="Cricket">🏏 Cricket</button>
+        <button class="chip" data-sport="Box Cricket">🥎 Box Cricket</button>
+        <button class="chip" data-sport="Badminton">🏸 Badminton</button>
+        <button class="chip" data-sport="Pickleball">🎾 Pickleball</button>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Locality</label>
+          <input type="text" id="heroSearch" placeholder="e.g. Dharampeth">
+        </div>
+        <div class="field">
+          <label>Date</label>
+          <input type="text" id="heroDateField" value="" readonly>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="heroFindBtn">Search turfs</button>
+    </div>
+  </div>
+
+  <div class="wrap stats">
+    <div class="stats-grid">
+      <div><div class="stat-num" data-count="150">0</div><div class="stat-label">Turfs listed</div></div>
+      <div><div class="stat-num" data-count="12">0</div><div class="stat-label">Cities</div></div>
+      <div><div class="stat-num" data-count="41000" data-suffix="+" data-live="true">0</div><div class="stat-label">Bookings made</div></div>
+      <div><div class="stat-num" data-count="48" data-decimal="true" data-suffix="★">0</div><div class="stat-label">Average rating</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LIVE ACTIVITY TICKER ============ -->
+<div class="activity-strip">
+  <div class="wrap activity-ticker">
+    <span class="live-dot"></span>
+    <span id="tickerText">Loading live activity…</span>
+  </div>
+</div>
+
+<!-- ============ TURFS ============ -->
+<section class="section" id="turfs">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Tonight's lineup</span>
+        <h2 style="margin-top:10px;">Turfs near you</h2>
+      </div>
+      <p>Every listing shows real pitch dimensions, live slot status and what's actually included — floodlights, parking, the works.</p>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-pills" id="gridSportToggle">
+        <button class="chip active" data-sport="all">All</button>
+        <button class="chip" data-sport="Football">Football</button>
+        <button class="chip" data-sport="Cricket">Cricket</button>
+        <button class="chip" data-sport="Box Cricket">Box Cricket</button>
+        <button class="chip" data-sport="Badminton">Badminton</button>
+        <button class="chip" data-sport="Pickleball">Pickleball</button>
+      </div>
+      <select class="sort-select" id="sortSelect">
+        <option value="popular">Sort: Popular</option>
+        <option value="price-low">Price: Low to high</option>
+        <option value="price-high">Price: High to low</option>
+        <option value="rating">Rating: Top rated</option>
+      </select>
+    </div>
+
+    <div class="turf-grid" id="turfGrid"></div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="section" id="how">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div><span class="eyebrow">The process</span><h2 style="margin-top:10px;">Three steps to kickoff</h2></div>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">01 / PICK</div>
+        <div class="step-icon"><svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
+        <h3>Pick your pitch</h3>
+        <p>Filter by sport, locality and price to find a turf that fits your squad and your evening.</p>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02 / SLOT</div>
+        <div class="step-icon"><svg viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg></div>
+        <h3>Choose your slot</h3>
+        <p>Live scoreboard shows exactly what's open, what's filling up, and what's already taken.</p>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03 / PLAY</div>
+        <div class="step-icon"><svg viewBox="0 0 24 24" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg></div>
+        <h3>Walk in and play</h3>
+        <p>Get instant confirmation with a booking ID. Show up, the ground keeper already has your name.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section class="section" id="testimonials">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div><span class="eyebrow">Player ratings</span><h2 style="margin-top:10px;">What regulars say</h2></div>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <p>Booked a 7-a-side slot for our office league at 9pm on a Friday — confirmed in under a minute, no back and forth on WhatsApp.</p>
+        <div class="testi-who">
+          <div class="testi-jersey">07</div>
+          <div><div class="testi-name">Rohan Deshmukh</div><div class="testi-meta">Civil Lines · Football regular</div></div>
+        </div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <p>The slot grid actually matches reality — when it says booked, it's booked. Saved me a wasted trip twice now.</p>
+        <div class="testi-who">
+          <div class="testi-jersey">11</div>
+          <div><div class="testi-name">Ayesha Khan</div><div class="testi-meta">Dharampeth · Badminton</div></div>
+        </div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★☆</div>
+        <p>Box cricket nets near Wardha Road were exactly as described — proper floodlights, no surprise charges at the gate.</p>
+        <div class="testi-who">
+          <div class="testi-jersey">23</div>
+          <div><div class="testi-name">Karan Bhalerao</div><div class="testi-meta">Wardha Road · Box Cricket</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PARTNER CTA ============ -->
+<section class="section" style="padding-top:0;">
+  <div class="wrap">
+    <div class="partner reveal">
+      <div>
+        <span class="eyebrow">For ground owners</span>
+        <h3 style="margin-top:12px;">Own a turf? Fill every empty slot.</h3>
+        <p>List your ground on FLOODLIT and manage bookings, blackout dates and pricing from one dashboard — zero setup fee.</p>
+      </div>
+      <div class="partner-right"><a href="#" class="btn btn-amber">List your turf →</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="brand"><span class="dot"></span>FLOODLIT</div>
+        <p>Real-time turf booking for Nagpur and beyond. Built for players who'd rather be playing than calling around.</p>
+        <div class="foot-social">
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 4s-.7 2-2 3c1.4 8.6-7 13-13.5 9.4 2.5.2 5-.6 6.5-2C9 14 6.5 12 6 9c1 .5 2 .5 2.5.2C5 7 4 3.5 5 2c2 2.3 5 3.7 8 4-.5-3 3-5 5.5-3 1 0 2-1 2-1-.3 1.3-1 2-1.8 2.4 1 0 2-.4 2.5-1-.5 1-1.4 1.8-2.2 2.6z"/></svg></a>
+          <a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3 21l2.1-5.5A8.5 8.5 0 1 1 21 11.5z"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>Explore</h4>
+        <ul><li><a href="#turfs">Browse turfs</a></li><li><a href="#how">How it works</a></li><li><a href="#testimonials">Reviews</a></li><li><a href="#">List your turf</a></li></ul>
+      </div>
+      <div class="foot-col">
+        <h4>Sports</h4>
+        <ul><li><a href="#">Football</a></li><li><a href="#">Cricket</a></li><li><a href="#">Box Cricket</a></li><li><a href="#">Badminton</a></li><li><a href="#">Pickleball</a></li></ul>
+      </div>
+      <div class="foot-col">
+        <h4>Support</h4>
+        <ul><li><a href="#">Help centre</a></li><li><a href="#">Cancellation policy</a></li><li><a href="#">Contact us</a></li><li><a href="#">Partner support</a></li></ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 FLOODLIT. All rights reserved.</span>
+      <span>Made for players in Nagpur, Maharashtra</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ BOOKING MODAL ============ -->
+<div class="modal-overlay" id="bookingOverlay">
+  <div class="modal" id="bookingModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- ============ MY BOOKINGS PANEL ============ -->
+<div class="bookings-overlay" id="bookingsOverlay">
+  <div class="bookings-panel">
+    <div class="bp-head">
+      <h3>My bookings</h3>
+      <button class="modal-close" id="closeBookings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div id="bookingsList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+/* ======================================================
+   FIREBASE SETUP
+   1. Create a project at https://console.firebase.google.com
+   2. Build a Web app inside it, copy the config object it gives you,
+      and paste it below in place of the placeholder values.
+   3. In the console: Authentication → Sign-in method → enable "Anonymous".
+   4. In the console: Firestore Database → Create database (production mode is fine).
+   5. In the console: Firestore Database → Rules → replace everything with the
+      rules below → Publish.
+
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       match /slots/{slotId} {
+         allow read: if true;
+         allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+         allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+         allow update: if false;
+       }
+       match /bookings/{bookingId} {
+         allow read: if request.auth != null && resource.data.uid == request.auth.uid;
+         allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+         allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+         allow update: if false;
+       }
+     }
+   }
+
+   Anyone can read slot availability (so the grid works for every visitor),
+   but a person can only create or cancel bookings/slots stamped with their
+   own anonymous uid — Firestore rejects anything else before it's written.
+
+   Leave the placeholders below untouched and the site runs in demo mode
+   automatically — fully usable, just not persistent across sessions/devices.
+====================================================== */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+import {
+  getAuth, signInAnonymously, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+import {
+  getFirestore, doc, collection, query, where, onSnapshot, runTransaction, serverTimestamp, writeBatch
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyD8JkGKH2kU9Ypgx5w7LeXj9TDJaeQ2FMQ",
+  authDomain: "turf-booking-website-a7b3e.firebaseapp.com",
+  projectId: "turf-booking-website-a7b3e",
+  storageBucket: "turf-booking-website-a7b3e.firebasestorage.app",
+  messagingSenderId: "1053309084249",
+  appId: "1:1053309084249:web:3bab9ffb35d2194c1a0748",
+};
+const FIREBASE_ENABLED = !!(firebaseConfig.apiKey && !firebaseConfig.apiKey.startsWith('YOUR_'));
+
+let fbApp, fbAuth, db, currentUser = null;
+let unsubscribeBookings = null;
+
+function initFirebase(){
+  const banner = document.getElementById('setupBanner');
+  if(!FIREBASE_ENABLED){
+    if(banner) banner.style.display = '';
+    return;
+  }
+  if(banner) banner.style.display = 'none';
+  try{
+    fbApp = initializeApp(firebaseConfig);
+    fbAuth = getAuth(fbApp);
+    db = getFirestore(fbApp);
+    onAuthStateChanged(fbAuth, user=>{
+      currentUser = user;
+      if(user) subscribeToMyBookings();
+      if(activeTurf) renderModalBooking();
+    });
+    signInAnonymously(fbAuth).catch(err=>{
+      console.error('Anonymous sign-in failed:', err);
+      showToast('Sign-in failed — enable Anonymous auth in your Firebase console');
+    });
+  }catch(err){
+    console.error('Firebase init failed:', err);
+    showToast('Could not connect to Firebase — check your config');
+    if(banner){ banner.style.display=''; banner.querySelector('span').innerHTML = '⚠ Could not connect to Firebase — running in demo mode. Check the browser console for details.'; }
+  }
+}
+
+function subscribeToMyBookings(){
+  if(!FIREBASE_ENABLED || !db || !currentUser) return;
+  if(unsubscribeBookings) unsubscribeBookings();
+  const q = query(collection(db,'bookings'), where('uid','==', currentUser.uid));
+  unsubscribeBookings = onSnapshot(q, snap=>{
+    bookings = snap.docs.map(d=>{
+      const data = d.data();
+      return {
+        docId: d.id,
+        id: data.bookingCode,
+        turfId: data.turfId,
+        turf: data.turfName,
+        locality: data.locality,
+        sport: data.sport,
+        date: data.dateLabel,
+        dateKey: data.dateKey,
+        time: data.timeLabel,
+        hours: data.hours || [],
+        total: data.total,
+        _ts: (data.createdAt && data.createdAt.toMillis) ? data.createdAt.toMillis() : Date.now()
+      };
+    }).sort((a,b)=>b._ts - a._ts);
+    renderBookingsList();
+  }, err=>{
+    console.error(err);
+    showToast('Could not load your bookings');
+  });
+}
+
+/* ======================================================
+   DATA
+====================================================== */
+const TURFS = [
+  {id:'gs01', name:'GreenStrike Arena', locality:'Civil Lines', sport:'Football', tagline:'5-a-side · FIFA-spec turf', price:1200, rating:4.8, reviews:212, popular:true, amenities:['Floodlights','Parking','Washroom','Cafeteria']},
+  {id:'wr02', name:'Wardha Road Box Arena', locality:'Wardha Road', sport:'Box Cricket', tagline:'Caged nets · Tournament ready', price:900, rating:4.6, reviews:158, popular:false, amenities:['Floodlights','Equipment rental','Parking']},
+  {id:'dp03', name:'Smash Court', locality:'Dharampeth', sport:'Badminton', tagline:'Wooden flooring · AC courts', price:400, rating:4.9, reviews:301, popular:true, amenities:['AC','Equipment rental','Washroom']},
+  {id:'tn04', name:'Trimurti Turf Football', locality:'Trimurti Nagar', sport:'Football', tagline:'7-a-side · Premium grass', price:1800, rating:4.7, reviews:94, popular:false, amenities:['Floodlights','Parking','Cafeteria','Washroom']},
+  {id:'bs05', name:'Besa Cricket Nets', locality:'Besa', sport:'Cricket', tagline:'4 bowling lanes · Bowling machine', price:600, rating:4.5, reviews:76, popular:false, amenities:['Floodlights','Equipment rental','Drinking water']},
+  {id:'mn06', name:'Manish Nagar Pickle Club', locality:'Manish Nagar', sport:'Pickleball', tagline:'Outdoor · Synthetic surface', price:500, rating:4.7, reviews:63, popular:true, amenities:['Floodlights','Parking','Drinking water']},
+  {id:'sd07', name:'Sadar Sports Hub', locality:'Sadar', sport:'Football', tagline:'Multi-sport · 5 & 7-a-side', price:1500, rating:4.4, reviews:140, popular:false, amenities:['Floodlights','Parking','Washroom','Cafeteria']},
+  {id:'hg08', name:'Hingna Turf Park', locality:'Hingna Road', sport:'Football', tagline:'5-a-side · New astroturf', price:1000, rating:4.6, reviews:88, popular:false, amenities:['Floodlights','Parking']},
+  {id:'mn09', name:'Manish Nagar Cricket Box', locality:'Manish Nagar', sport:'Box Cricket', tagline:'Single net · Late-night slots', price:800, rating:4.3, reviews:51, popular:false, amenities:['Floodlights','Drinking water']},
+  {id:'dp10', name:'Dharampeth Smash 2', locality:'Dharampeth', sport:'Badminton', tagline:'Synthetic mat · 2 courts', price:380, rating:4.6, reviews:120, popular:false, amenities:['AC','Washroom']},
+];
+
+const AMEN_ICONS = {
+  'Floodlights':'<path d="M12 2v4M5 12H1m22 0h-4M5.6 5.6L3 3m17.4 2.6L23 3M8 16a4 4 0 1 1 8 0c0 1.5-1 2-1 4H9c0-2-1-2.5-1-4z"/>',
+  'Parking':'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 16V8h3.5a2.5 2.5 0 0 1 0 5H9"/>',
+  'Washroom':'<circle cx="12" cy="6" r="3"/><path d="M5 22v-7a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v7"/>',
+  'Cafeteria':'<path d="M3 10h14v2a7 7 0 0 1-7 7h0a7 7 0 0 1-7-7v-2z"/><path d="M17 10h2a2 2 0 0 1 0 4h-1.5"/><path d="M6 2v3M10 2v3"/>',
+  'Equipment rental':'<circle cx="6" cy="18" r="3"/><circle cx="18" cy="6" r="3"/><path d="M8.5 15.5L15.5 8.5"/>',
+  'Drinking water':'<path d="M12 2s7 7.5 7 12a7 7 0 1 1-14 0c0-4.5 7-12 7-12z"/>',
+  'AC':'<rect x="2" y="6" width="20" height="6" rx="2"/><path d="M6 16v2M10 16v3M14 16v2M18 16v3"/>'
+};
+function amenIcon(name){return AMEN_ICONS[name] || '<circle cx="12" cy="12" r="9"/>';}
+
+/* ======================================================
+   SPORT LINE-ART (signature visual)
+====================================================== */
+function sportArt(sport){
+  const c = 'rgba(95,203,60,.45)', c2='rgba(255,200,87,.4)';
+  if(sport==='Football'){
+    return `<svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice">
+      <rect x="14" y="14" width="372" height="222" rx="4" fill="none" stroke="${c}" stroke-width="1.5"/>
+      <line x1="200" y1="14" x2="200" y2="236" stroke="${c}" stroke-width="1.5"/>
+      <circle cx="200" cy="125" r="38" fill="none" stroke="${c}" stroke-width="1.5"/>
+      <rect x="14" y="70" width="56" height="110" fill="none" stroke="${c}" stroke-width="1.5"/>
+      <rect x="14" y="95" width="22" height="60" fill="none" stroke="${c}" stroke-width="1.5"/>
+      <rect x="330" y="70" width="56" height="110" fill="none" stroke="${c}" stroke-width="1.5"/>
+      <rect x="364" y="95" width="22" height="60" fill="none" stroke="${c}" stroke-width="1.5"/>
+      <!-- animated players -->
+      <circle r="4.5" fill="${c2}" opacity="0.85">
+        <animate attributeName="cx" values="110;240;170;310;110" dur="8s" repeatCount="indefinite" calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+        <animate attributeName="cy" values="85;120;195;155;85" dur="8s" repeatCount="indefinite" calcMode="spline" keySplines=".4 0 .6 1;.4 0 .6 1;.4 0 .6 1;.4 0 .6 1"/>
+      </circle>
+      <circle r="3.5" fill="${c}" opacity="0.6">
+        <animate attributeName="cx" values="290;200;130;250;290" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="155;90;170;210;155" dur="11s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="3" fill="${c2}" opacity="0.7">
+        <animate attributeName="cx" values="195;175;215;190;195" dur="5s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="113;138;142;108;113" dur="5s" repeatCount="indefinite"/>
+      </circle>
+      <!-- ball -->
+      <circle r="2.5" fill="#fff" opacity="0.6">
+        <animate attributeName="cx" values="200;220;190;240;200" dur="3.5s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="125;115;140;130;125" dur="3.5s" repeatCount="indefinite"/>
+      </circle>
+    </svg>`;
+  }
+  if(sport==='Cricket'){
+    return `<svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice">
+      <ellipse cx="200" cy="125" rx="180" ry="105" fill="none" stroke="${c}" stroke-width="1.5"/>
+      <rect x="178" y="40" width="44" height="170" fill="none" stroke="${c}" stroke-width="1.5"/>
+      <line x1="178" y1="58" x2="222" y2="58" stroke="${c}" stroke-width="1.5"/>
+      <line x1="178" y1="192" x2="222" y2="192" stroke="${c}" stroke-width="1.5"/>
+      <line x1="195" y1="42" x2="195" y2="34" stroke="${c2}" stroke-width="2"/>
+      <line x1="200" y1="42" x2="200" y2="32" stroke="${c2}" stroke-width="2"/>
+      <line x1="205" y1="42" x2="205" y2="34" stroke="${c2}" stroke-width="2"/>
+      <!-- fielders -->
+      <circle r="4" fill="${c2}" opacity="0.75">
+        <animate attributeName="cx" values="100;140;80;120;100" dur="10s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="80;130;160;100;80" dur="10s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="3.5" fill="${c}" opacity="0.6">
+        <animate attributeName="cx" values="300;260;320;280;300" dur="13s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="90;140;170;110;90" dur="13s" repeatCount="indefinite"/>
+      </circle>
+      <!-- ball -->
+      <circle r="2.5" fill="${c2}" opacity="0.8">
+        <animate attributeName="cx" values="200;155;200;245;200" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="125;80;125;80;125" dur="4s" repeatCount="indefinite"/>
+      </circle>
+    </svg>`;
+  }
+  if(sport==='Box Cricket'){
+    return `<svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice">
+      <rect x="14" y="14" width="372" height="222" rx="4" fill="none" stroke="${c}" stroke-width="1.5"/>
+      ${Array.from({length:9}).map((_,i)=>`<line x1="${30+i*45}" y1="14" x2="${30+i*45-90}" y2="236" stroke="${c}" stroke-width=".7" opacity=".5"/>`).join('')}
+      <rect x="170" y="60" width="60" height="130" fill="none" stroke="${c2}" stroke-width="1.5"/>
+      <circle r="4" fill="${c2}" opacity="0.7">
+        <animate attributeName="cx" values="120;200;280;200;120" dur="9s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="125;90;125;175;125" dur="9s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="2.5" fill="#fff" opacity="0.55">
+        <animate attributeName="cx" values="200;240;200;160;200" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="125;100;125;100;125" dur="3s" repeatCount="indefinite"/>
+      </circle>
+    </svg>`;
+  }
+  if(sport==='Pickleball'){
+    return `<svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice">
+      <rect x="40" y="30" width="320" height="190" fill="none" stroke="${c}" stroke-width="1.5"/>
+      <line x1="200" y1="30" x2="200" y2="220" stroke="${c}" stroke-width="1.5"/>
+      <line x1="120" y1="30" x2="120" y2="220" stroke="${c}" stroke-width="1"/>
+      <line x1="280" y1="30" x2="280" y2="220" stroke="${c}" stroke-width="1"/>
+      <line x1="40" y1="125" x2="360" y2="125" stroke="${c2}" stroke-width="2"/>
+      <circle r="4" fill="${c2}" opacity="0.75">
+        <animate attributeName="cx" values="100;160;100" dur="5s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="80;125;175" dur="5s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="4" fill="${c}" opacity="0.65">
+        <animate attributeName="cx" values="300;240;300" dur="5.5s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="175;125;80" dur="5.5s" repeatCount="indefinite"/>
+      </circle>
+      <!-- shuttlecock/ball -->
+      <circle r="3" fill="#fff" opacity="0.5">
+        <animate attributeName="cx" values="200;140;200;260;200" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="70;125;180;125;70" dur="2s" repeatCount="indefinite"/>
+      </circle>
+    </svg>`;
+  }
+  // Badminton
+  return `<svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid slice">
+    <rect x="40" y="20" width="320" height="210" fill="none" stroke="${c}" stroke-width="1.5"/>
+    <line x1="40" y1="125" x2="360" y2="125" stroke="${c2}" stroke-width="2"/>
+    <line x1="40" y1="55" x2="360" y2="55" stroke="${c}" stroke-width="1"/>
+    <line x1="40" y1="195" x2="360" y2="195" stroke="${c}" stroke-width="1"/>
+    <line x1="200" y1="20" x2="200" y2="55" stroke="${c}" stroke-width="1"/>
+    <line x1="200" y1="195" x2="200" y2="230" stroke="${c}" stroke-width="1"/>
+    <circle r="4" fill="${c2}" opacity="0.75">
+      <animate attributeName="cx" values="120;200;280;200;120" dur="6s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="70;90;70;90;70" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="4" fill="${c}" opacity="0.65">
+      <animate attributeName="cx" values="280;200;120;200;280" dur="7s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="180;165;180;165;180" dur="7s" repeatCount="indefinite"/>
+    </circle>
+    <!-- shuttlecock -->
+    <circle r="2.5" fill="#fff" opacity="0.55">
+      <animate attributeName="cx" values="200;160;200;240;200" dur="1.8s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="125;60;125;60;125" dur="1.8s" repeatCount="indefinite"/>
+    </circle>
+  </svg>`;
+}
+const SPORT_EMOJI = {'Football':'⚽','Cricket':'🏏','Box Cricket':'🥎','Badminton':'🏸','Pickleball':'🎾'};
+
+/* ======================================================
+   STATE
+====================================================== */
+let state = { sport:'all', search:'', sort:'popular' };
+let bookings = [];
+let activeTurf = null;
+let activeDateIdx = 0;
+let selectedSlots = [];
+let unsubscribeSlots = null;
+let liveBookedHours = new Set();
+let slotsLoading = true;
+let localBookedSet = new Set(); // demo-mode only: hours actually booked this session
+
+/* ======================================================
+   UTIL
+====================================================== */
+function hash(str){let h=0; for(let i=0;i<str.length;i++){h=(h<<5)-h+str.charCodeAt(i); h|=0;} return Math.abs(h);}
+function fmtDate(d){return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'});}
+function dowShort(d){return d.toLocaleDateString('en-IN',{weekday:'short'});}
+function next7Days(){
+  const out=[]; const today=new Date();
+  for(let i=0;i<7;i++){const d=new Date(today); d.setDate(today.getDate()+i); out.push(d);}
+  return out;
+}
+function dateKeyFor(d){
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function showToast(msg, icon){
+  const t = document.getElementById('toast');
+  t.innerHTML = (icon||'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>') + msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ======================================================
+   RENDER: TURF GRID
+====================================================== */
+function renderGrid(){
+  const grid = document.getElementById('turfGrid');
+  let list = TURFS.filter(t=>{
+    const matchSport = state.sport==='all' || t.sport===state.sport;
+    const q = state.search.trim().toLowerCase();
+    const matchSearch = !q || t.name.toLowerCase().includes(q) || t.locality.toLowerCase().includes(q) || t.sport.toLowerCase().includes(q);
+    return matchSport && matchSearch;
+  });
+  if(state.sort==='price-low') list = list.slice().sort((a,b)=>a.price-b.price);
+  else if(state.sort==='price-high') list = list.slice().sort((a,b)=>b.price-a.price);
+  else if(state.sort==='rating') list = list.slice().sort((a,b)=>b.rating-a.rating);
+  else list = list.slice().sort((a,b)=>(b.popular?1:0)-(a.popular?1:0) || b.rating-a.rating);
+
+  if(list.length===0){
+    grid.innerHTML = `<div class="empty-state"><h3>No turfs match that search</h3><p>Try a different locality or clear the sport filter.</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(t=>{
+    const seed = hash(t.id + new Date().toDateString());
+    const slotsLeft = 4 + (seed % 10);
+    const slotPct = Math.round(slotsLeft / 17 * 100);
+    const barColor = slotsLeft <= 5 ? 'var(--clay)' : slotsLeft <= 9 ? 'var(--floodlight)' : 'var(--turf-light)';
+    const barLabel = slotsLeft <= 4 ? `🔥 ${slotsLeft} left!` : `${slotsLeft} slots left`;
+    const watching = 2 + (seed % 7);
+    return `
+    <div class="turf-card${t.popular?' popular-card':''}" data-id="${t.id}">
+      <div class="tc-media">
+        ${sportArt(t.sport)}
+        <div class="tc-badge">${SPORT_EMOJI[t.sport]||''} ${t.sport}</div>
+        <button class="tc-fav" data-fav="${t.id}" aria-label="Save turf">
+          <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.35-9.5-8.5C.5 8.5 3 5 6.5 5c2 0 3.3 1 5.5 3 2.2-2 3.5-3 5.5-3C21 5 23.5 8.5 21.5 12.5 19 16.65 12 21 12 21z"/></svg>
+        </button>
+        ${t.popular?`<div class="tc-ribbon">⚡ Filling fast · <span class="tc-live">👀 ${watching} watching</span></div>`:''}
+      </div>
+      <div class="tc-body">
+        <div class="tc-top">
+          <div class="tc-name">${t.name}</div>
+          <div class="tc-rating"><svg viewBox="0 0 24 24"><path d="M12 2l3 6.5 7 1-5.2 4.9 1.3 7-6.1-3.4-6.1 3.4 1.3-7L2 9.5l7-1z"/></svg>${t.rating}</div>
+        </div>
+        <div class="tc-loc">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          ${t.locality} · ${t.tagline}
+        </div>
+        <div class="avail-bar-wrap">
+          <div class="avail-bar-track"><div class="avail-bar-fill" style="width:${slotPct}%; background:${barColor};"></div></div>
+          <div class="avail-bar-label" style="color:${barColor};">${barLabel}</div>
+        </div>
+        <div class="tc-amen">
+          ${t.amenities.slice(0,3).map(a=>`<span class="amen-chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">${amenIcon(a)}</svg>${a}</span>`).join('')}
+          ${t.amenities.length>3?`<span class="amen-chip">+${t.amenities.length-3} more</span>`:''}
+        </div>
+        <div class="tc-foot">
+          <div class="tc-price"><b>₹${t.price}</b><span> / hour</span></div>
+          <button class="btn btn-primary btn-sm" data-book="${t.id}">Book now</button>
+        </div>
+      </div>
+    </div>
+  `;}).join('');
+
+  // stagger reveal
+  requestAnimationFrame(()=>{
+    document.querySelectorAll('.turf-card').forEach((card,i)=>{
+      setTimeout(()=>card.classList.add('in'), i*45);
+    });
+  });
+
+  grid.querySelectorAll('[data-book]').forEach(btn=>{
+    btn.addEventListener('click', ()=>openBooking(btn.dataset.book));
+  });
+  grid.querySelectorAll('[data-fav]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      btn.classList.toggle('active');
+      showToast(btn.classList.contains('active') ? 'Saved to favourites' : 'Removed from favourites');
+    });
+  });
+}
+
+/* ======================================================
+   BOOKING MODAL
+====================================================== */
+function slotStatus(turfId, dateObj, hour){
+  // demo-mode fallback only — used when Firebase isn't configured
+  const isToday = dateObj.toDateString() === new Date().toDateString();
+  if(isToday && hour <= new Date().getHours()) return {status:'booked'};
+  const key = `${turfId}-${dateObj.toDateString()}-${hour}`;
+  const h = hash(key) % 10;
+  if(h < 3) return {status:'booked'};
+  if(h < 5) return {status:'fast', left: (h%2)+1};
+  return {status:'avail'};
+}
+
+function getSlotStatusForHour(h, dateObj){
+  const isToday = dateObj.toDateString() === new Date().toDateString();
+  if(isToday && h <= new Date().getHours()) return {status:'booked'};
+  if(FIREBASE_ENABLED){
+    if(slotsLoading) return {status:'loading'};
+    return liveBookedHours.has(h) ? {status:'booked'} : {status:'avail'};
+  }
+  if(localBookedSet.has(`${activeTurf.id}_${dateKeyFor(dateObj)}_${h}`)) return {status:'booked'};
+  return slotStatus(activeTurf.id, dateObj, h);
+}
+
+function subscribeSlotsForDate(){
+  if(unsubscribeSlots){ unsubscribeSlots(); unsubscribeSlots = null; }
+  if(!FIREBASE_ENABLED || !activeTurf) return;
+  slotsLoading = true;
+  liveBookedHours = new Set();
+  const days = next7Days();
+  const dateKey = dateKeyFor(days[activeDateIdx]);
+  const tdKey = `${activeTurf.id}_${dateKey}`;
+  const q = query(collection(db,'slots'), where('turfDateKey','==', tdKey));
+  unsubscribeSlots = onSnapshot(q, (snap)=>{
+    liveBookedHours = new Set(snap.docs.map(d=>d.data().hour));
+    slotsLoading = false;
+    renderModalBooking();
+  }, (err)=>{
+    console.error(err);
+    slotsLoading = false;
+    showToast('Live availability unavailable — check your connection');
+  });
+}
+
+function openBooking(turfId){
+  activeTurf = TURFS.find(t=>t.id===turfId);
+  activeDateIdx = 0;
+  selectedSlots = [];
+  if(FIREBASE_ENABLED) subscribeSlotsForDate();
+  renderModalBooking();
+  document.getElementById('bookingOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeBooking(){
+  document.getElementById('bookingOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  if(unsubscribeSlots){ unsubscribeSlots(); unsubscribeSlots = null; }
+}
+
+function renderModalBooking(){
+  const t = activeTurf;
+  const days = next7Days();
+  const dateObj = days[activeDateIdx];
+  const content = document.getElementById('modalContent');
+
+  const dateStripHtml = days.map((d,i)=>`
+    <div class="date-pill ${i===activeDateIdx?'active':''}" data-idx="${i}">
+      <div class="dow">${i===0?'Today':dowShort(d)}</div>
+      <div class="dnum">${fmtDate(d)}</div>
+    </div>
+  `).join('');
+
+  const hours = Array.from({length:17}, (_,i)=>6+i); // 6am - 10pm start
+  const statuses = hours.map(h=>({h, ...getSlotStatusForHour(h, dateObj)}));
+
+  // drop any selection that just became booked elsewhere (live mode race-safety)
+  selectedSlots = selectedSlots.filter(h=>{
+    const s = statuses.find(x=>x.h===h);
+    return s && s.status !== 'booked';
+  });
+
+  const slotsHtml = statuses.map(s=>{
+    const label = s.h<12 ? `${s.h}–${s.h+1} AM` : (s.h===12?`12–1 PM`: `${s.h-12}–${s.h-11} PM`);
+    const sel = selectedSlots.includes(s.h);
+    let cls = s.status;
+    if(sel) cls += ' selected';
+    const disabled = (s.status==='booked' || s.status==='loading') ? 'disabled' : '';
+    return `<button class="slot ${cls}" ${disabled} data-hour="${s.h}" ${s.status==='fast'?`data-left="${s.left} left"`:''}>${label}</button>`;
+  }).join('');
+
+  const bookedCount = statuses.filter(s=>s.status==='booked').length;
+  const legendHtml = FIREBASE_ENABLED ? `
+      <div class="slot-legend">
+        <span><i class="legend-dot ld-avail"></i>Available</span>
+        <span><i class="legend-dot ld-selected"></i>Selected</span>
+        <span><i class="legend-dot ld-booked"></i>Booked</span>
+      </div>
+      ${slotsLoading
+        ? `<div class="live-banner loading"><span class="live-dot"></span>Loading live availability…</div>`
+        : `<div class="live-banner"><span class="live-dot"></span>Live · ${bookedCount} of ${hours.length} slots booked for this date</div>`}
+  ` : `
+      <div class="slot-legend">
+        <span><i class="legend-dot ld-avail"></i>Available</span>
+        <span><i class="legend-dot ld-fast"></i>Filling fast</span>
+        <span><i class="legend-dot ld-booked"></i>Booked</span>
+      </div>
+  `;
+
+  const waitingForAuth = FIREBASE_ENABLED && !currentUser;
+  const confirmDisabled = selectedSlots.length===0 || waitingForAuth;
+  const confirmLabel = waitingForAuth ? 'Connecting…' : 'Confirm booking';
+
+  content.innerHTML = `
+    <div class="modal-head">
+      <div>
+        <h3 id="modalTitle">${t.name}</h3>
+        <div class="mh-loc"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13z"/><circle cx="12" cy="9" r="2.5"/></svg>${t.locality} · ${t.tagline}</div>
+      </div>
+      <button class="modal-close" id="modalCloseBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <h3 style="font-size:11px; font-family:var(--font-m); text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:10px;">Choose a date</h3>
+      <div class="date-strip" id="dateStrip">${dateStripHtml}</div>
+
+      <h3 style="font-size:11px; font-family:var(--font-m); text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:10px;">Choose your slot(s)</h3>
+      ${legendHtml}
+      <div class="slot-grid" id="slotGrid">${slotsHtml}</div>
+
+      <h3 style="font-size:11px; font-family:var(--font-m); text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:10px;">What's included</h3>
+      <div class="amen-row">
+        ${t.amenities.map(a=>`<span class="amen-chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">${amenIcon(a)}</svg>${a}</span>`).join('')}
+      </div>
+    </div>
+    <div class="summary-bar">
+      <div class="summary-left">
+        <span id="summaryText">${selectedSlots.length} slot${selectedSlots.length===1?'':'s'} selected</span>
+        <b id="summaryPrice">₹${selectedSlots.length*t.price}</b>
+      </div>
+      <button class="btn btn-primary" id="confirmBtn" ${confirmDisabled?'disabled':''}>${confirmLabel}</button>
+    </div>
+  `;
+
+  document.getElementById('modalCloseBtn').addEventListener('click', closeBooking);
+  document.getElementById('dateStrip').querySelectorAll('.date-pill').forEach(p=>{
+    p.addEventListener('click', ()=>{
+      activeDateIdx = parseInt(p.dataset.idx);
+      selectedSlots=[];
+      if(FIREBASE_ENABLED) subscribeSlotsForDate();
+      renderModalBooking();
+    });
+  });
+  document.getElementById('slotGrid').querySelectorAll('.slot:not(.booked):not(.loading)').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const h = parseInt(btn.dataset.hour);
+      const idx = selectedSlots.indexOf(h);
+      if(idx>-1) selectedSlots.splice(idx,1); else selectedSlots.push(h);
+      selectedSlots.sort((a,b)=>a-b);
+      renderModalBooking();
+    });
+  });
+  const confirmBtn = document.getElementById('confirmBtn');
+  if(confirmBtn) confirmBtn.addEventListener('click', confirmBooking);
+}
+
+function renderSuccessPane(bookingCode, dateLabel, timeLabel){
+  const t = activeTurf;
+  const content = document.getElementById('modalContent');
+  content.innerHTML = `
+    <div class="success-pane">
+      <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg></div>
+      <h3>Slot's yours</h3>
+      <p>${t.name} · ${t.locality}</p>
+      <p>${dateLabel} · ${timeLabel}</p>
+      <div class="booking-id">Booking ID ${bookingCode}</div>
+      <div class="success-actions">
+        <button class="btn btn-ghost" id="successCloseBtn">Close</button>
+        <button class="btn btn-primary" id="successViewBtn">View my bookings</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('successCloseBtn').addEventListener('click', closeBooking);
+  document.getElementById('successViewBtn').addEventListener('click', ()=>{ closeBooking(); openBookings(); });
+  setTimeout(()=>{ if(typeof launchConfetti === 'function') launchConfetti(); }, 100);
+}
+
+async function confirmBooking(){
+  const t = activeTurf;
+  const days = next7Days();
+  const date = days[activeDateIdx];
+  const dateLabel = (activeDateIdx===0?'Today':dowShort(date)) + ', ' + fmtDate(date);
+  const hours = selectedSlots.slice();
+  if(hours.length===0) return;
+  const total = hours.length * t.price;
+  const timeLabel = `${hours[0]}:00 – ${hours[hours.length-1]+1}:00`;
+
+  if(!FIREBASE_ENABLED){
+    const dateKey = dateKeyFor(date);
+    const bookingId = 'FL' + (10000 + Math.floor(hash(t.id+date.toDateString()+hours.join(','))%89999));
+    hours.forEach(h=> localBookedSet.add(`${t.id}_${dateKey}_${h}`));
+    bookings.unshift({id:bookingId, turfId:t.id, turf:t.name, locality:t.locality, sport:t.sport, date:dateLabel, dateKey, time:timeLabel, hours:hours.slice(), total});
+    renderSuccessPane(bookingId, dateLabel, timeLabel);
+    showToast(`Booking confirmed · ${bookingId}`);
+    renderBookingsList();
+    return;
+  }
+
+  if(!currentUser){ showToast('Still connecting — try again in a second'); return; }
+
+  const confirmBtn = document.getElementById('confirmBtn');
+  if(confirmBtn){ confirmBtn.disabled = true; confirmBtn.textContent = 'Confirming…'; }
+
+  const dateKey = dateKeyFor(date);
+  const bookingRef = doc(collection(db,'bookings'));
+  const bookingCode = 'FL' + (10000 + Math.floor(Math.random()*89999));
+
+  try{
+    await runTransaction(db, async (tx)=>{
+      const slotRefs = hours.map(h=>doc(db,'slots', `${t.id}_${dateKey}_${h}`));
+      const snaps = [];
+      for(const ref of slotRefs){ snaps.push(await tx.get(ref)); }
+      const taken = [];
+      snaps.forEach((snap,i)=>{ if(snap.exists()) taken.push(hours[i]); });
+      if(taken.length){ const e = new Error('TAKEN'); e.taken = taken; throw e; }
+      slotRefs.forEach((ref,i)=>{
+        tx.set(ref, {
+          turfId:t.id, turfDateKey:`${t.id}_${dateKey}`, date:dateKey, hour:hours[i],
+          uid:currentUser.uid, bookingId:bookingRef.id, createdAt: serverTimestamp()
+        });
+      });
+      tx.set(bookingRef, {
+        turfId:t.id, turfName:t.name, locality:t.locality, sport:t.sport,
+        dateKey, dateLabel, timeLabel, hours, total, uid:currentUser.uid,
+        bookingCode, createdAt: serverTimestamp()
+      });
+    });
+    renderSuccessPane(bookingCode, dateLabel, timeLabel);
+    showToast(`Booking confirmed · ${bookingCode}`);
+  } catch(err){
+    if(err && err.taken){
+      selectedSlots = selectedSlots.filter(h=>!err.taken.includes(h));
+      showToast('Someone just booked one of those slots — pick another');
+      renderModalBooking();
+    } else {
+      console.error(err);
+      showToast('Booking failed — check your connection and try again');
+      if(confirmBtn){ confirmBtn.disabled = selectedSlots.length===0; confirmBtn.textContent = 'Confirm booking'; }
+    }
+  }
+}
+
+/* ======================================================
+   MY BOOKINGS PANEL
+====================================================== */
+function openBookings(){
+  renderBookingsList();
+  document.getElementById('bookingsOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeBookings(){
+  document.getElementById('bookingsOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function renderBookingsList(){
+  const el = document.getElementById('bookingsList');
+  if(bookings.length===0){
+    el.innerHTML = `<div class="bookings-empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>
+      <p style="font-family:var(--font-d); font-size:22px; color:var(--chalk); margin-bottom:6px;">No bookings yet</p>
+      <p style="font-size:13.5px;">Slots you confirm this session will show up here.</p>
+    </div>`;
+    return;
+  }
+  el.innerHTML = bookings.map(b=>{
+    const cancellable = canCancelBooking(b);
+    return `
+    <div class="booking-item">
+      <div class="bi-top"><span class="bi-name">${b.turf}</span><span class="bi-tag">${b.id}</span></div>
+      <div class="bi-meta">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 22s7-7.5 7-13a7 7 0 1 0-14 0c0 5.5 7 13 7 13z"/><circle cx="12" cy="9" r="2.5"/></svg>${b.locality} · ${b.sport}</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg>${b.date} · ${b.time}</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>₹${b.total} paid at venue</span>
+      </div>
+      <button class="bi-cancel" data-cancel="${b.docId || b.id}" ${cancellable?'':'disabled'}>${cancellable?'Cancel booking':'Locked — starts within 2h'}</button>
+    </div>
+  `;}).join('');
+
+  el.querySelectorAll('[data-cancel]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      if(btn.disabled) return;
+      if(btn.dataset.armed==='1'){
+        const key = btn.dataset.cancel;
+        const b = bookings.find(x=>(x.docId||x.id)===key);
+        if(b) cancelBooking(b);
+      } else {
+        btn.dataset.armed = '1';
+        btn.textContent = 'Confirm cancel ✕';
+        btn.classList.add('armed');
+        clearTimeout(btn._armTimer);
+        btn._armTimer = setTimeout(()=>{
+          btn.dataset.armed = '0'; btn.textContent = 'Cancel booking'; btn.classList.remove('armed');
+        }, 4000);
+      }
+    });
+  });
+}
+
+function canCancelBooking(b){
+  if(!b.dateKey || !b.hours || !b.hours.length) return true;
+  try{
+    const start = new Date(`${b.dateKey}T${String(b.hours[0]).padStart(2,'0')}:00:00`);
+    return (start.getTime() - Date.now()) > 2*60*60*1000;
+  }catch(e){ return true; }
+}
+
+async function cancelBooking(b){
+  try{
+    if(FIREBASE_ENABLED && db && b.docId){
+      const batch = writeBatch(db);
+      (b.hours||[]).forEach(h=>{
+        batch.delete(doc(db,'slots', `${b.turfId}_${b.dateKey}_${h}`));
+      });
+      batch.delete(doc(db,'bookings', b.docId));
+      await batch.commit();
+      // the onSnapshot listener on 'bookings' refreshes the list automatically
+    } else {
+      (b.hours||[]).forEach(h=> localBookedSet.delete(`${b.turfId}_${b.dateKey}_${h}`));
+      bookings = bookings.filter(x=>x.id!==b.id);
+      renderBookingsList();
+    }
+    if(activeTurf && b.turfId===activeTurf.id) renderModalBooking();
+    showToast('Booking cancelled');
+  }catch(err){
+    console.error(err);
+    showToast('Could not cancel — try again');
+  }
+}
+
+/* ======================================================
+   FILTER / SEARCH WIRING
+====================================================== */
+function wireSportToggle(container){
+  container.querySelectorAll('.chip').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      state.sport = chip.dataset.sport;
+      document.querySelectorAll('#heroSportToggle .chip, #gridSportToggle .chip').forEach(c=>{
+        c.classList.toggle('active', c.dataset.sport===state.sport);
+      });
+      renderGrid();
+    });
+  });
+}
+wireSportToggle(document.getElementById('heroSportToggle'));
+wireSportToggle(document.getElementById('gridSportToggle'));
+
+document.getElementById('heroFindBtn').addEventListener('click', ()=>{
+  state.search = document.getElementById('heroSearch').value;
+  renderGrid();
+  document.getElementById('turfs').scrollIntoView({behavior:'smooth'});
+});
+document.getElementById('heroSearch').addEventListener('keydown', e=>{
+  if(e.key==='Enter'){ document.getElementById('heroFindBtn').click(); }
+});
+document.getElementById('sortSelect').addEventListener('change', e=>{
+  state.sort = e.target.value; renderGrid();
+});
+
+document.getElementById('bookingOverlay').addEventListener('click', e=>{
+  if(e.target.id==='bookingOverlay') closeBooking();
+});
+document.getElementById('bookingsOverlay').addEventListener('click', e=>{
+  if(e.target.id==='bookingsOverlay') closeBookings();
+});
+document.getElementById('closeBookings').addEventListener('click', closeBookings);
+document.getElementById('navBookingsLink').addEventListener('click', e=>{ e.preventDefault(); openBookings(); });
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){ closeBooking(); closeBookings(); }
+});
+
+/* ======================================================
+   STAT COUNT-UP
+====================================================== */
+const statObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const el = entry.target;
+      const target = parseFloat(el.dataset.count);
+      const isDecimal = el.dataset.decimal === 'true';
+      const suffix = el.dataset.suffix || '';
+      const duration = 1400;
+      const start = performance.now();
+      function tick(now){
+        const p = Math.min(1, (now-start)/duration);
+        const eased = 1 - Math.pow(1-p, 3);
+        let val = target*eased;
+        el.textContent = (isDecimal ? (val/10).toFixed(1) : Math.round(val).toLocaleString('en-IN')) + suffix;
+        if(p<1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+      statObserver.unobserve(el);
+    }
+  });
+}, {threshold:.4});
+document.querySelectorAll('.stat-num').forEach(el=>statObserver.observe(el));
+
+/* ======================================================
+   GENERIC SCROLL REVEAL
+====================================================== */
+const revealObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){ entry.target.classList.add('in'); revealObserver.unobserve(entry.target); }
+  });
+}, {threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));
+
+/* ======================================================
+   STEP ICON STAGGER
+====================================================== */
+const stepObserver = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); stepObserver.unobserve(e.target); }});
+},{threshold:.2});
+document.querySelectorAll('.step').forEach(el=>stepObserver.observe(el));
+
+document.getElementById('sbClose').addEventListener('click', ()=>{
+  document.getElementById('setupBanner').style.display = 'none';
+});
+
+/* ======================================================
+   LIFE — CURSOR SPOTLIGHT ON HERO
+====================================================== */
+const _heroEl = document.querySelector('.hero');
+if(_heroEl){
+  _heroEl.addEventListener('mousemove', e=>{
+    const r = _heroEl.getBoundingClientRect();
+    _heroEl.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+    _heroEl.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+  },{passive:true});
+}
+
+/* ======================================================
+   LIFE — FLOATING PARTICLES
+====================================================== */
+(()=>{
+  const container = document.getElementById('heroParticles');
+  if(!container) return;
+  for(let i=0;i<36;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = (Math.random()*3.5+1.5).toFixed(1);
+    const isGreen = Math.random()>.4;
+    p.style.cssText = `width:${size}px;height:${size}px;left:${(Math.random()*100).toFixed(1)}%;animation-duration:${(Math.random()*16+9).toFixed(1)}s;animation-delay:${(Math.random()*15).toFixed(1)}s;--dx:${((Math.random()-.5)*80).toFixed(0)}px;background:${isGreen?'var(--turf-light)':'var(--floodlight-soft)'};border-radius:50%;`;
+    container.appendChild(p);
+  }
+})();
+
+/* ======================================================
+   LIFE — CARD MOUSE GLOW TRACKING
+====================================================== */
+document.addEventListener('mousemove', e=>{
+  document.querySelectorAll('.turf-card').forEach(card=>{
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    card.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+},{passive:true});
+
+/* ======================================================
+   LIFE — SCROLL PROGRESS BAR
+====================================================== */
+window.addEventListener('scroll',()=>{
+  const d = document.documentElement;
+  const pct = (d.scrollTop/(d.scrollHeight-d.clientHeight)*100).toFixed(1);
+  const bar = document.getElementById('scrollProgress');
+  if(bar) bar.style.width = pct+'%';
+},{passive:true});
+
+/* ======================================================
+   LIFE — LIVE CLOCK
+====================================================== */
+(()=>{
+  const el = document.getElementById('navClock');
+  if(!el) return;
+  function tick(){ el.textContent = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true})+' · Nagpur'; }
+  tick(); setInterval(tick,1000);
+})();
+
+/* ======================================================
+   LIVE DATE FIELD
+====================================================== */
+(()=>{
+  const el = document.getElementById('heroDateField');
+  if(el){ const d=new Date(); el.value='Today, '+d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'}); }
+})();
+
+/* ======================================================
+   LIFE — LIVE TICKER
+====================================================== */
+const TICKER = [
+  '⚽ Rohan D. just booked GreenStrike Arena · Civil Lines · 8–9 PM',
+  '🏸 Ayesha K. booked Smash Court · Dharampeth · 7–8 PM',
+  '🥎 Priyank S. booked Wardha Road Box Arena · 9–10 PM',
+  '⚽ 3 slots left at Sadar Sports Hub tonight — book fast',
+  '🏏 Besa Cricket Nets · Tomorrow 6–7 AM — last 2 slots',
+  '🎾 Manish Nagar Pickle Club · New 5★ reviews rolling in',
+  '⚽ Trimurti Turf Football · Fully booked tonight — try tomorrow',
+  '🏸 Dharampeth Smash 2 · 3 slots just opened for this weekend',
+  '⚽ Hingna Turf Park · Freshly relaid astroturf — now open',
+  '🥎 Karan B. booked Manish Nagar Cricket Box · 10–11 PM',
+  '🏸 Smash Court added an early-morning 5 AM slot this week',
+  '⚽ GreenStrike Arena · Covered benches added — same price',
+];
+(()=>{
+  const el = document.getElementById('tickerText');
+  if(!el) return;
+  let idx = 0;
+  el.textContent = TICKER[0];
+  setInterval(()=>{
+    el.style.opacity='0';
+    setTimeout(()=>{ idx=(idx+1)%TICKER.length; el.textContent=TICKER[idx]; el.style.opacity='1'; },360);
+  },3800);
+})();
+
+/* ======================================================
+   LIFE — SOCIAL PROOF POPUPS
+====================================================== */
+const PROOF = [
+  {name:'Vikram S.', action:'just booked', detail:'GreenStrike Arena · 9 PM', emoji:'⚽'},
+  {name:'Priya N.', action:'just booked', detail:'Smash Court · 7 PM', emoji:'🏸'},
+  {name:'Rahul M.', action:'just booked', detail:'Wardha Road Box · 8 PM', emoji:'🥎'},
+  {name:'Sneha B.', action:'saved to favourites', detail:'Trimurti Turf Football', emoji:'❤️'},
+  {name:'Akash P.', action:'just booked', detail:'Sadar Sports Hub · 10 PM', emoji:'⚽'},
+  {name:'Divya R.', action:'just booked', detail:'Besa Cricket Nets · 6 AM', emoji:'🏏'},
+  {name:'Amir K.', action:'just booked', detail:'Hingna Turf Park · 7 PM', emoji:'⚽'},
+  {name:'Pooja V.', action:'left a 5★ review for', detail:'Smash Court', emoji:'⭐'},
+  {name:'Siddharth J.', action:'just booked', detail:'Dharampeth Smash 2 · 8 PM', emoji:'🏸'},
+];
+let _proofIdx = 0;
+function showProof(){
+  const m = PROOF[_proofIdx++%PROOF.length];
+  const el = document.createElement('div');
+  el.className = 'proof-popup';
+  el.innerHTML = `<div class="pp-emoji">${m.emoji}</div><div class="pp-text"><strong>${m.name}</strong> ${m.action}<br><span>${m.detail}</span></div><button class="pp-close" aria-label="dismiss">✕</button>`;
+  document.body.appendChild(el);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
+  const bye=()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(),460); };
+  el.querySelector('.pp-close').addEventListener('click',bye);
+  setTimeout(bye,5400);
+}
+setTimeout(()=>{ showProof(); setInterval(showProof, 13000+Math.random()*5000); },5500);
+
+/* ======================================================
+   LIFE — CONFETTI ON BOOKING SUCCESS
+====================================================== */
+function launchConfetti(){
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText = 'position:fixed;inset:0;z-index:1500;pointer-events:none;';
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+  const COLS=['#5FCB3C','#92E66E','#FFC857','#FFE3AC','#F2F5F0','#C9544A','#E2837A'];
+  const bits=Array.from({length:100},()=>({
+    x:canvas.width/2+(Math.random()-.5)*220, y:canvas.height*.36,
+    vx:(Math.random()-.5)*12, vy:Math.random()*-18-4,
+    r:Math.random()*5+3, color:COLS[Math.floor(Math.random()*COLS.length)],
+    rot:Math.random()*360, rv:(Math.random()-.5)*10, sq:Math.random()>.45,
+  }));
+  let frame=0; const TOTAL=120;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    bits.forEach(b=>{
+      b.vy+=.46; b.x+=b.vx; b.y+=b.vy; b.rot+=b.rv;
+      ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(b.rot*Math.PI/180);
+      ctx.fillStyle=b.color; ctx.globalAlpha=Math.max(0,1-frame/TOTAL);
+      b.sq?ctx.fillRect(-b.r,-b.r/2,b.r*2,b.r):(ctx.beginPath(),ctx.arc(0,0,b.r,0,Math.PI*2),ctx.fill());
+      ctx.restore();
+    });
+    if(++frame<TOTAL+20) requestAnimationFrame(draw); else canvas.remove();
+  }
+  requestAnimationFrame(draw);
+}
+
+/* ======================================================
+   LIFE — LIVE BOOKING COUNT DRIFT
+====================================================== */
+(()=>{
+  const el = document.querySelector('[data-live="true"]');
+  if(!el) return;
+  let val=41000;
+  function maybeAdd(){ if(Math.random()<.3){ val++; el.textContent=val.toLocaleString('en-IN')+'+'; } setTimeout(maybeAdd,9000+Math.random()*13000); }
+  setTimeout(maybeAdd,18000);
+})();
+
+/* ======================================================
+   INIT
+====================================================== */
+renderGrid();
+initFirebase();
+</script>
+</body>
+</html>
